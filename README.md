@@ -49,9 +49,9 @@ This tool condenses that workflow to a single page:
 |-------------|-----------------------|--------|
 | `037833100` | Apple Inc             | Equity |
 | `594918104` | Microsoft Corp        | Equity |
-| `023135106` | Amazon.com Inc        | Equity |
 | `88160R101` | Tesla Inc             | Equity |
-| `912828YX3` | US Treasury Note      | Bond   |
+| `594918BQ6` | Microsoft Corp Bond   | Bond   |
+| `38141GXZ2` | Goldman Sachs Bond    | Bond   |
 
 > Bond CUSIPs (like Treasuries) automatically display maturity, coupon, yield-to-maturity, credit rating, and payment frequency. Equities display sector, market cap category, dividend yield, and shares outstanding.
 
