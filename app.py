@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, render_template, send_file
 from services.cusip_lookup import lookup_cusip
 from services.enrichment import enrich_security
 from services.vendor import submit_to_vendor
-from db.database import init_db, save_submission, get_submissions
+from db.database import init_db, save_submission, get_submissions, get_stats
 
 app = Flask(__name__)
 
@@ -46,6 +46,11 @@ def submit():
 @app.route("/api/submissions", methods=["GET"])
 def submissions():
     return jsonify(get_submissions())
+
+
+@app.route("/api/stats", methods=["GET"])
+def stats():
+    return jsonify(get_stats())
 
 
 @app.route("/api/export", methods=["GET"])

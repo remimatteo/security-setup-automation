@@ -56,6 +56,22 @@ def save_submission(security: dict, result: dict) -> int:
         return cursor.lastrowid
 
 
+def get_stats() -> dict:
+    with get_conn() as conn:
+        total    = conn.execute("SELECT COUNT(*) FROM submissions").fetchone()[0]
+        bonds    = conn.execute("SELECT COUNT(*) FROM submissions WHERE asset_class='BOND'").fetchone()[0]
+        equities = conn.execute("SELECT COUNT(*) FROM submissions WHERE asset_class='EQUITY'").fetchone()[0]
+        recent   = conn.execute(
+            "SELECT cusip, ticker, name, asset_class, submitted_at FROM submissions ORDER BY submitted_at DESC LIMIT 5"
+        ).fetchall()
+        return {
+            "total": total,
+            "bonds": bonds,
+            "equities": equities,
+            "recent": [dict(r) for r in recent],
+        }
+
+
 def get_submissions() -> list:
     with get_conn() as conn:
         rows = conn.execute(

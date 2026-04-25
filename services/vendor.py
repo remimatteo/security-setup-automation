@@ -20,7 +20,7 @@ def submit_to_vendor(security: dict) -> dict:
         "vendor": config.VENDOR_NAME,
         "submitted_at": now,
         "message": (
-            f"Security {security['cusip']} successfully submitted to "
-            f"{config.VENDOR_NAME}. Reference: {ref_id}"
+            f"Security {security['cusip']} added to {config.VENDOR_NAME}. "
+            f"Reference: {ref_id}"
         ),
     }
