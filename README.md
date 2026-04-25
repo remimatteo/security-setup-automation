@@ -1,11 +1,31 @@
 # Security Setup Automation
 
-A full-stack web application that automates the securities onboarding workflow for bonds and equities. Enter a CUSIP, retrieve enriched security data from Bloomberg's OpenFIGI API, and submit to a vendor in a single click — replacing a previously manual, multi-step process.
+A full-stack web application that automates the securities onboarding workflow for bonds and equities. Enter a CUSIP or ticker symbol, retrieve enriched security data from Bloomberg's OpenFIGI API, review and edit the fields, then add to the Security Master in one click — replacing a previously manual, multi-step process.
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.0-lightgrey)
 ![OpenFIGI](https://img.shields.io/badge/API-Bloomberg%20OpenFIGI-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+---
+
+## Screenshots
+
+### Equity Lookup
+![Equity lookup showing AAPL security details](images/lookup_equity.png)
+*Look up any equity by CUSIP or ticker — sector, market cap, dividend yield, ISIN and more returned instantly from Bloomberg OpenFIGI*
+
+### Bond Lookup
+![Bond lookup showing maturity, coupon, and credit rating](images/lookup_bond.png)
+*Bond CUSIPs surface maturity date, coupon rate, yield-to-maturity, credit rating, day count convention, and payment frequency*
+
+### Security Master Registry
+![Security Master registry with search and filter](images/registry.png)
+*Searchable, filterable audit log of every security added — export to CSV for reconciliation*
+
+### Dashboard
+![Dashboard showing asset class breakdown chart](images/dashboard.png)
+*Live stats and bond/equity breakdown chart across all securities in the registry*
 
 ---
 
@@ -21,51 +41,55 @@ This process is error-prone and slow when done by hand — especially at scale a
 
 ## The Solution
 
-This tool condenses that workflow to a single page:
+This tool condenses that entire workflow into three steps:
 
-- **CUSIP → Full Security Profile** in one lookup via Bloomberg's OpenFIGI API
-- **Asset-class-aware enrichment** — bonds surface maturity date, coupon, yield, credit rating, day count; equities surface sector, market cap tier, dividend yield, shares outstanding
-- **One-click vendor submission** with a generated reference number and audit trail
-- **Submission history** with CSV export for reconciliation and reporting
+- **CUSIP or Ticker → Full Security Profile** via Bloomberg's OpenFIGI API
+- **Review and edit** any field before submission — corrections stay, identifiers (CUSIP, ISIN, FIGI) are locked
+- **One-click submission** to the Security Master with a generated reference number and full audit trail
 
 ---
 
 ## Features
 
+- **Dual lookup** — search by CUSIP (9 characters) or ticker symbol (AAPL, MSFT, JPM, etc.)
 - **Real Bloomberg data** via [OpenFIGI](https://www.openfigi.com/) (free, no key required for basic use)
+- **Asset-class-aware enrichment** — bonds surface maturity, coupon, yield, credit rating, day count; equities surface sector, market cap tier, dividend yield, shares outstanding
 - **ISIN computation** from CUSIP using the standard Luhn check-digit algorithm
-- **Deterministic enrichment** — the same CUSIP always returns the same bond/equity detail set (seeded from CUSIP hash)
-- **Persistent audit log** stored in SQLite with full JSON snapshot of each security at submission time
-- **CSV export** of full submission history
-- **Clean, finance-style UI** — no heavy framework, just fast vanilla JS
+- **Editable fields** — review and correct enriched data before it enters the registry
+- **Security Master Registry** — searchable/filterable table with modal detail view and CSV export
+- **Dashboard** — live stat cards and a bond/equity breakdown chart (Chart.js)
+- **Persistent audit log** — SQLite stores a full JSON snapshot of each security at submission time
 
 ---
 
 ## Demo
 
-### Try these CUSIPs out of the box
+### Try these out of the box
 
-| CUSIP       | Security              | Type   |
-|-------------|-----------------------|--------|
-| `037833100` | Apple Inc             | Equity |
-| `594918104` | Microsoft Corp        | Equity |
-| `88160R101` | Tesla Inc             | Equity |
-| `594918BQ6` | Microsoft Corp Bond   | Bond   |
-| `38141GXZ2` | Goldman Sachs Bond    | Bond   |
+| Input | Security | Type |
+|-------|----------|------|
+| `AAPL` | Apple Inc | Equity (ticker) |
+| `MSFT` | Microsoft Corp | Equity (ticker) |
+| `TSLA` | Tesla Inc | Equity (ticker) |
+| `JPM` | JPMorgan Chase | Equity (ticker) |
+| `037833100` | Apple Inc | Equity (CUSIP) |
+| `594918BQ6` | Microsoft Corp Bond | Bond (CUSIP) |
+| `38141GXZ2` | Goldman Sachs Bond | Bond (CUSIP) |
 
-> Bond CUSIPs (like Treasuries) automatically display maturity, coupon, yield-to-maturity, credit rating, and payment frequency. Equities display sector, market cap category, dividend yield, and shares outstanding.
+> Ticker lookups return all available fields — CUSIP and ISIN are left blank and editable so you can fill them in if known.
 
 ---
 
 ## Tech Stack
 
-| Layer      | Technology                        |
-|------------|-----------------------------------|
-| Backend    | Python 3.9+, Flask 3.0            |
-| Database   | SQLite (zero-config, file-based)  |
-| Market Data| Bloomberg OpenFIGI REST API       |
-| Frontend   | Vanilla JS, HTML5, CSS3           |
-| ISIN Calc  | Luhn algorithm (standard)         |
+| Layer       | Technology                       |
+|-------------|----------------------------------|
+| Backend     | Python 3.9+, Flask 3.0           |
+| Database    | SQLite (zero-config, file-based) |
+| Market Data | Bloomberg OpenFIGI REST API      |
+| Frontend    | Vanilla JS, HTML5, CSS3          |
+| Charts      | Chart.js                         |
+| ISIN Calc   | Luhn algorithm (standard)        |
 
 ---
 
@@ -77,10 +101,8 @@ git clone https://github.com/your-username/security-setup-automation.git
 cd security-setup-automation
 ```
 
-**2. Create a virtual environment and install dependencies**
+**2. Install dependencies**
 ```bash
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -107,40 +129,48 @@ Open [http://localhost:5000](http://localhost:5000) in your browser. The SQLite 
 ```
 security-setup-automation/
 ├── app.py                     # Flask routes
-├── config.py                  # Config (API URL, DB path, vendor settings)
+├── config.py                  # Config (API URL, DB path, vendor name)
 ├── requirements.txt
-├── schema.sql                 # DB schema (reference)
+├── schema.sql                 # DB schema reference
 ├── services/
-│   ├── cusip_lookup.py        # Bloomberg OpenFIGI integration
+│   ├── cusip_lookup.py        # Bloomberg OpenFIGI — CUSIP and ticker lookup
 │   ├── enrichment.py          # Bond/equity enrichment + ISIN calculation
-│   └── vendor.py              # Vendor submission handler (Phase 3)
+│   └── vendor.py              # Security Master submission handler
 ├── db/
-│   └── database.py            # SQLite — init, save, query
+│   └── database.py            # SQLite — init, save, query, stats
 ├── templates/
 │   └── index.html
-└── static/
-    ├── css/style.css
-    └── js/app.js
+├── static/
+│   ├── css/style.css
+│   └── js/app.js
+└── images/                    # Screenshots for this README
 ```
 
 ---
 
 ## API Endpoints
 
-| Method | Endpoint           | Description                              |
-|--------|--------------------|------------------------------------------|
-| POST   | `/api/lookup`      | Fetch security details by CUSIP          |
-| POST   | `/api/submit`      | Submit security to vendor, log to DB     |
-| GET    | `/api/submissions` | Return full submission history as JSON   |
-| GET    | `/api/export`      | Download submission history as CSV       |
+| Method | Endpoint           | Description                                      |
+|--------|--------------------|--------------------------------------------------|
+| POST   | `/api/lookup`      | Fetch security details by CUSIP or ticker        |
+| POST   | `/api/submit`      | Add security to Security Master, log to DB       |
+| GET    | `/api/submissions` | Return full submission history as JSON           |
+| GET    | `/api/stats`       | Return counts and recent activity for dashboard  |
+| GET    | `/api/export`      | Download submission history as CSV               |
 
-**Lookup request:**
+**Lookup by CUSIP:**
 ```json
 POST /api/lookup
 { "cusip": "037833100" }
 ```
 
-**Lookup response (equity):**
+**Lookup by ticker:**
+```json
+POST /api/lookup
+{ "cusip": "AAPL" }
+```
+
+**Response (equity):**
 ```json
 {
   "cusip": "037833100",
@@ -160,12 +190,13 @@ POST /api/lookup
 
 ## How It Works
 
-1. **CUSIP input** → POST to `/api/lookup`
+1. **Lookup** — POST to `/api/lookup` with a CUSIP or ticker; auto-detected by length
 2. **OpenFIGI** returns FIGI, ticker, name, exchange, and market sector
-3. **Enrichment layer** detects asset class (bond vs equity) from OpenFIGI's `marketSector` and `securityType` fields, then appends the relevant detail set
-4. **ISIN** is computed client-free using the standard algorithm: `US` + CUSIP + Luhn check digit
-5. **Submit** → POST to `/api/submit` → vendor handler generates a reference ID, saves a full snapshot to SQLite, returns confirmation
-6. **History table** updates live after each submission
+3. **Enrichment** detects asset class from OpenFIGI's `marketSector`/`securityType` and appends the relevant field set (bond or equity)
+4. **ISIN** is computed from CUSIP using the standard algorithm: `US` + CUSIP + Luhn check digit
+5. **Edit** — all fields except identifiers are editable before submission
+6. **Submit** → POST to `/api/submit` → reference ID generated, full snapshot saved to SQLite
+7. **Registry and Dashboard** update live after each submission
 
 ---
 
