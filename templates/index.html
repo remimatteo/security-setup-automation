@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Setup Automation</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">&#9670;</span>
+        <span class="logo-text">Security Setup Automation</span>
+      </div>
+      <span class="header-sub">Powered by OpenFIGI &amp; Phase 3 Securities</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- CUSIP Lookup -->
+    <section class="card lookup-card">
+      <h2>CUSIP Lookup</h2>
+      <p class="card-desc">Enter a 9-character CUSIP to retrieve security details from Bloomberg/OpenFIGI and submit for trading enablement.</p>
+      <div class="lookup-row">
+        <input id="cusip-input" type="text" maxlength="9" placeholder="e.g. 037833100" autocomplete="off" spellcheck="false" />
+        <button id="lookup-btn" onclick="lookupCusip()">Look Up</button>
+      </div>
+      <div class="example-cusips">
+        <span>Try:</span>
+        <button class="chip" onclick="setAndLookup('037833100')">037833100 · AAPL</button>
+        <button class="chip" onclick="setAndLookup('594918104')">594918104 · MSFT</button>
+        <button class="chip" onclick="setAndLookup('912828YX3')">912828YX3 · US Treasury</button>
+        <button class="chip" onclick="setAndLookup('023135106')">023135106 · AMZN</button>
+      </div>
+      <div id="lookup-error" class="error-msg" style="display:none;"></div>
+    </section>
+
+    <!-- Security Detail Card -->
+    <section class="card detail-card" id="detail-card" style="display:none;">
+      <div class="detail-header">
+        <div>
+          <div class="security-name" id="sec-name"></div>
+          <div class="security-meta" id="sec-meta"></div>
+        </div>
+        <span class="asset-badge" id="asset-badge"></span>
+      </div>
+
+      <div class="fields-grid" id="fields-grid"></div>
+
+      <div class="submit-row">
+        <button id="submit-btn" class="submit-btn" onclick="submitSecurity()">
+          Submit to Phase 3 Securities
+        </button>
+        <span class="submit-hint">One-click submission — enables the security for trading</span>
+      </div>
+      <div id="submit-result" style="display:none;"></div>
+    </section>
+
+    <!-- Submission History -->
+    <section class="card history-card">
+      <div class="history-header">
+        <h2>Submission History</h2>
+        <button class="export-btn" onclick="exportCsv()">Export CSV</button>
+      </div>
+      <div id="history-body">
+        <div class="empty-state">No submissions yet. Look up a CUSIP and submit to get started.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" style="display:none;"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
