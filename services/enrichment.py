@@ -3,8 +3,9 @@ import random
 from datetime import date, timedelta
 
 
-def _rng(cusip: str) -> random.Random:
-    seed = int(hashlib.md5(cusip.encode()).hexdigest(), 16)
+def _rng(cusip: str, figi: str = "") -> random.Random:
+    seed_key = cusip if cusip else figi
+    seed = int(hashlib.md5(seed_key.encode()).hexdigest(), 16)
     return random.Random(seed)
 
 
@@ -30,7 +31,7 @@ def compute_isin(cusip: str, country: str = "US") -> str:
 
 
 def enrich_bond(cusip: str, figi_data: dict) -> dict:
-    rng = _rng(cusip)
+    rng = _rng(cusip, figi_data.get("figi", ""))
     today = date.today()
 
     years = rng.randint(2, 30)
@@ -45,10 +46,12 @@ def enrich_bond(cusip: str, figi_data: dict) -> dict:
     bond_types = ["Corporate Bond", "Government Bond", "Municipal Bond", "Agency Bond"]
     bond_weights = [50, 25, 15, 10]
 
+    isin = compute_isin(cusip) if cusip else ""
+
     return {
         **figi_data,
         "cusip": cusip,
-        "isin": compute_isin(cusip),
+        "isin": isin,
         "asset_class": "BOND",
         "bond_type": rng.choices(bond_types, weights=bond_weights)[0],
         "maturity_date": maturity.strftime("%Y-%m-%d"),
@@ -63,7 +66,7 @@ def enrich_bond(cusip: str, figi_data: dict) -> dict:
 
 
 def enrich_equity(cusip: str, figi_data: dict) -> dict:
-    rng = _rng(cusip)
+    rng = _rng(cusip, figi_data.get("figi", ""))
 
     sectors = [
         "Technology", "Financials", "Healthcare", "Consumer Discretionary",
@@ -73,10 +76,12 @@ def enrich_equity(cusip: str, figi_data: dict) -> dict:
     caps = ["Large Cap", "Mid Cap", "Small Cap"]
     cap_weights = [50, 30, 20]
 
+    isin = compute_isin(cusip) if cusip else ""
+
     return {
         **figi_data,
         "cusip": cusip,
-        "isin": compute_isin(cusip),
+        "isin": isin,
         "asset_class": "EQUITY",
         "sector": rng.choice(sectors),
         "market_cap_category": rng.choices(caps, weights=cap_weights)[0],

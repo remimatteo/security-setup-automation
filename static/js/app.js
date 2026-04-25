@@ -80,8 +80,8 @@ async function lookupCusip() {
   currentSecurity = null;
   originalSecurity = null;
 
-  if (cusip.length !== 9) {
-    errEl.textContent = "Please enter a valid 9-character CUSIP.";
+  if (!cusip || cusip.length > 9) {
+    errEl.textContent = "Enter a CUSIP (9 characters) or a ticker symbol (e.g. AAPL).";
     errEl.style.display = "block";
     return;
   }
@@ -113,12 +113,18 @@ async function lookupCusip() {
 
 function renderDetail(sec) {
   document.getElementById("sec-name").textContent = sec.name || "Unknown Security";
-  document.getElementById("sec-meta").textContent =
-    `CUSIP: ${sec.cusip}  ·  ISIN: ${sec.isin || "—"}`;
+  document.getElementById("sec-meta").textContent = sec.cusip
+    ? `CUSIP: ${sec.cusip}  ·  ISIN: ${sec.isin || "—"}`
+    : `Ticker: ${sec.ticker || "—"}  ·  FIGI: ${sec.figi || "—"}`;
 
   const badge = document.getElementById("asset-badge");
   badge.textContent = sec.asset_class;
   badge.className = `asset-badge badge-${sec.asset_class.toLowerCase()}`;
+
+  const hint = document.getElementById("edit-hint");
+  hint.textContent = sec.cusip
+    ? "Fields are editable — review and correct before submitting. Identifiers (CUSIP, ISIN, FIGI) are locked."
+    : "Looked up by ticker — CUSIP and ISIN are blank. Enter the CUSIP if known before submitting to Security Master.";
 
   renderFieldsGrid("fields-grid", sec, true);
 

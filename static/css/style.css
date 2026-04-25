@@ -146,6 +146,10 @@ main {
   transition: all .15s;
 }
 .chip:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-lt); }
+.chip-ticker { border-color: #d1fae5; color: var(--equity); background: #f0fdf4; font-weight: 700; }
+.chip-ticker:hover { border-color: var(--equity); background: #d1fae5; color: var(--green-h); }
+.chip-group-label { font-size: .78rem; color: var(--muted); font-weight: 600; }
+.chip-divider { width: 1px; height: 18px; background: var(--border); align-self: center; margin: 0 .25rem; }
 .error-msg { margin-top: 1rem; color: var(--error); font-size: .875rem; font-weight: 500; }
 
 /* ── Detail Card ── */

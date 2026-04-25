@@ -34,17 +34,22 @@
     <div id="tab-lookup" class="tab-panel">
 
       <section class="card lookup-card">
-        <h2>CUSIP Lookup</h2>
-        <p class="card-desc">Enter a 9-character CUSIP to retrieve security details. Review and edit the fields, then add to Security Master.</p>
+        <h2>Security Lookup</h2>
+        <p class="card-desc">Enter a CUSIP (9 characters) or a ticker symbol to retrieve security details. Review and edit the fields, then add to Security Master.</p>
         <div class="lookup-row">
-          <input id="cusip-input" type="text" maxlength="9" placeholder="e.g. 037833100" autocomplete="off" spellcheck="false" />
+          <input id="cusip-input" type="text" maxlength="9" placeholder="CUSIP or Ticker — e.g. AAPL" autocomplete="off" spellcheck="false" />
           <button id="lookup-btn" onclick="lookupCusip()">Look Up</button>
         </div>
         <div class="example-cusips">
-          <span>Try:</span>
+          <span class="chip-group-label">By ticker:</span>
+          <button class="chip chip-ticker" onclick="setAndLookup('AAPL')">AAPL</button>
+          <button class="chip chip-ticker" onclick="setAndLookup('MSFT')">MSFT</button>
+          <button class="chip chip-ticker" onclick="setAndLookup('TSLA')">TSLA</button>
+          <button class="chip chip-ticker" onclick="setAndLookup('JPM')">JPM</button>
+          <button class="chip chip-ticker" onclick="setAndLookup('GOOGL')">GOOGL</button>
+          <span class="chip-divider"></span>
+          <span class="chip-group-label">By CUSIP:</span>
           <button class="chip" onclick="setAndLookup('037833100')">037833100 · AAPL</button>
-          <button class="chip" onclick="setAndLookup('594918104')">594918104 · MSFT</button>
-          <button class="chip" onclick="setAndLookup('88160R101')">88160R101 · TSLA</button>
           <button class="chip" onclick="setAndLookup('594918BQ6')">594918BQ6 · MSFT Bond</button>
           <button class="chip" onclick="setAndLookup('38141GXZ2')">38141GXZ2 · GS Bond</button>
         </div>
@@ -63,7 +68,7 @@
           </div>
         </div>
 
-        <p class="edit-hint">Fields are editable — review and correct before submitting. Identifiers (CUSIP, ISIN, FIGI) are locked.</p>
+        <p class="edit-hint" id="edit-hint">Fields are editable — review and correct before submitting. Identifiers (CUSIP, ISIN, FIGI) are locked.</p>
 
         <div class="fields-grid" id="fields-grid"></div>
 
