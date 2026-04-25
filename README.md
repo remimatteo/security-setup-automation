@@ -29,6 +29,19 @@ A full-stack web application that automates the securities onboarding workflow f
 
 ---
 
+## Try It Yourself
+
+```bash
+git clone https://github.com/remimatteo/security-setup-automation.git
+cd security-setup-automation
+pip install -r requirements.txt
+python app.py
+```
+
+Open [http://localhost:5000](http://localhost:5000) — no database setup, no API key required. Try typing `AAPL` or `MSFT` in the search bar to look up by ticker, or paste a CUSIP like `594918BQ6` to pull up a bond.
+
+---
+
 ## The Problem
 
 In fixed income and equity operations, adding a new security for trading requires:
